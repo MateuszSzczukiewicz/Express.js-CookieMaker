@@ -5,6 +5,7 @@ const { homeRouter } = require("./routes/home");
 const { configuratorRouter } = require("./routes/configurator");
 const { orderRouter } = require("./routes/order");
 const { join } = require("path");
+const { handlebarsHelpers } = require("./handlebars-helpers");
 
 const app = express();
 
@@ -15,10 +16,11 @@ app.use(express.static("public"));
 app.set("views", join(__dirname, "views"));
 app.set("view engine", "hbs");
 app.engine(
-  "hbs",
+  ".hbs",
   hbs.engine({
-    extname: "hbs",
+    extname: ".hbs",
     defaultLayout: "main",
+    helpers: handlebarsHelpers,
     layoutsDir: __dirname + "/views/layouts/",
     partialsDir: __dirname + "/views/partials",
   }),
