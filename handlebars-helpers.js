@@ -1,5 +1,5 @@
 const handlebarsHelpers = {
-  "find-price": (entries, selectedItem) => {
+  findPrice: (entries, selectedItem) => {
     const found = entries.find((el) => el[0] === selectedItem);
 
     if (!found) {
@@ -9,6 +9,8 @@ const handlebarsHelpers = {
     const [, price] = found;
     return price;
   },
+
+  pricify: (price) => price.toFixed(2),
 };
 
 module.exports = { handlebarsHelpers };
