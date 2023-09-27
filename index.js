@@ -5,7 +5,7 @@ const { homeRouter } = require("./routes/home");
 const { configuratorRouter } = require("./routes/configurator");
 const { orderRouter } = require("./routes/order");
 const { join } = require("path");
-const { handlebarsHelpers } = require("./handlebars-helpers");
+const { handlebarsHelpers } = require("./utils/handlebars-helpers");
 
 const app = express();
 

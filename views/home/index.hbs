@@ -1,15 +1,18 @@
 <h1>Configure your cookie</h1>
 
 <h2>Select cookie base</h2>
+
 {{>base-selector}}
 
-<h2>Select addons</h2>
+<h2>Select your favourite addons</h2>
+
 {{>addons-selector}}
 
 {{#if cookie.base}}
   {{> cookie-preview}}
   {{> addons}}
-  {{else}}
+  <a href="/" class="btn btn-big"><img src="../../public/assets/images/shopping-cart.png" class="cart-img" alt="">Order now!</a>
+{{else}}
   <p><strong>Please select base of your cookie to see its preview and price summary.</strong></p>
   <p>{{>base-selector}}</p>
 {{/if}}

@@ -2,3 +2,42 @@
     width: 601px;
     height: 640px;
 }
+
+.error {
+    border-top: 1px solid red;
+    padding: 15px;
+    background-color: #ffcdcd;
+}
+
+.btn {
+    background-color: #b0a797;
+    color: black;
+    text-decoration: none;
+    padding: 5px;
+    border: 1px solid #463412;
+    font-weight: bold;
+    margin: 3px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.btn-disabled {
+    background: #585858;
+    color: white;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-small {
+    padding: 0 5px;
+    margin: 0;
+}
+
+.btn-big {
+    font-size: 110%;
+    padding: 10px 20px;
+}
+
+.cart-img {
+    width: 32px
+}
