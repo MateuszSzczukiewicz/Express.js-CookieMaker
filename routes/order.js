@@ -1,35 +1,33 @@
 const express = require("express");
-const { getAddonsFromRequest } = require("../utils/get-addons-from-request");
-const { handlebarsHelpers } = require("../utils/handlebars-helpers");
-const { COOKIE_BASES, COOKIE_ADDONS } = require("../data/cookies-data");
+const { getCookieSettings } = require("../utils/get-cookie-settings");
 
 const orderRouter = express.Router();
 
-orderRouter.get("/summary", (req, res) => {
-  const { cookieBase } = req.cookies;
+orderRouter
+  .get("/summary", (req, res) => {
+    const { sum, addons, base, allBases, allAddons } = getCookieSettings(req);
 
-  const addons = getAddonsFromRequest(req);
+    res.render("order/summary", {
+      cookie: {
+        base,
+        addons,
+      },
+      allBases,
+      allAddons,
+      sum,
+    });
+  })
 
-  const sum =
-    (cookieBase
-      ? handlebarsHelpers.findPrice(Object.entries(COOKIE_BASES), cookieBase)
-      : 0) +
-    addons.reduce(
-      (prev, curr) =>
-        prev + handlebarsHelpers.findPrice(Object.entries(COOKIE_ADDONS), curr),
-      0,
-    );
+  .get("/thanks", (req, res) => {
+    const { sum } = getCookieSettings(req);
 
-  res.render("order/summary", {
-    cookie: {
-      base: "light",
-      addons,
-    },
-    bases: Object.entries(COOKIE_BASES),
-    addons: Object.entries(COOKIE_ADDONS),
-    sum,
+    res
+      .clearCookie("cookieBase")
+      .clearCookie("cookieAddons")
+      .render("order/thanks", {
+        sum,
+      });
   });
-});
 
 module.exports = {
   orderRouter,

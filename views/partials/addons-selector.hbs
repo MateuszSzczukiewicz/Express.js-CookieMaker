@@ -1,3 +1,3 @@
-{{#each addons}}
+{{#each allAddons}}
     <a href="/configurator/add-addon/{{this.[0]}}" class="btn {{#if (isInArray @root.cookie.addons this.[0])}}btn-disabled{{/if}}">Add {{this.[0]}} for {{this.[1]}} PLN</a>
 {{/each}}
