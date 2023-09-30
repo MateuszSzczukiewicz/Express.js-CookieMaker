@@ -1,32 +1,95 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const hbs = require("express-handlebars");
-const { homeRouter } = require("./routes/home");
-const { configuratorRouter } = require("./routes/configurator");
-const { orderRouter } = require("./routes/order");
+const { HomeRouter } = require("./routes/home");
+const { ConfiguratorRouter } = require("./routes/configurator");
+const { OrderRouter } = require("./routes/order");
 const { join } = require("path");
 const { handlebarsHelpers } = require("./utils/handlebars-helpers");
+const { COOKIE_BASES, COOKIE_ADDONS } = require("./data/cookies-data");
 
-const app = express();
+class CookieMakerApp {
+  constructor() {
+    this._loadData();
+    this._configureApp();
+    this._setRoutes();
+    this._run();
+  }
 
-app.use(express.json());
-app.use(express.static("public"));
-app.use(cookieParser());
-app.use(express.static("public"));
-app.set("views", join(__dirname, "views"));
-app.set("view engine", "hbs");
-app.engine(
-  ".hbs",
-  hbs.engine({
-    extname: ".hbs",
-    helpers: handlebarsHelpers,
-    defaultLayout: "main",
-    layoutsDir: __dirname + "/views/layouts/",
-    partialsDir: __dirname + "/views/partials",
-  }),
-);
-app.use("/", homeRouter);
-app.use("/configurator", configuratorRouter);
-app.use("/order", orderRouter);
+  _configureApp() {
+    this.app = express();
 
-app.listen(3001, "localhost");
+    this.app.use(express.json());
+    this.app.use(express.static("public"));
+    this.app.use(cookieParser());
+    this.app.use(express.static("public"));
+    this.app.set("views", join(__dirname, "views"));
+    this.app.engine(
+      ".hbs",
+      hbs.engine({
+        extname: ".hbs",
+        helpers: handlebarsHelpers,
+        defaultLayout: "main",
+        layoutsDir: __dirname + "/views/layouts/",
+        partialsDir: __dirname + "/views/partials",
+      }),
+    );
+    this.app.set("view engine", ".hbs");
+  }
+
+  _setRoutes() {
+    this.app.use("/", new HomeRouter().router);
+    this.app.use("/configurator", new ConfiguratorRouter().router);
+    this.app.use("/order", new OrderRouter().router);
+  }
+
+  _run() {
+    this.app.listen(3001, "localhost", () => {
+      console.log("Listening on http://localhost:3000");
+    });
+  }
+
+  showErrorPage(res, description) {
+    res.render("error", {
+      description,
+    });
+  }
+
+  getAddonsFromRequest(req) {
+    const { cookieAddons } = req.cookies;
+    return cookieAddons ? JSON.parse(cookieAddons) : [];
+  }
+
+  getCookieSettings(req) {
+    const { cookieBase: base } = req.cookies;
+
+    const addons = this.getAddonsFromRequest(req);
+
+    const allBases = Object.entries(this.data.COOKIE_BASES);
+    const allAddons = Object.entries(this.data.COOKIE_ADDONS);
+
+    const sum =
+      (base ? handlebarsHelpers.findPrice(allBases, base) : 0) +
+      addons.reduce(
+        (prev, curr) => prev + handlebarsHelpers.findPrice(allAddons, curr),
+        0,
+      );
+
+    return {
+      addons,
+      base,
+      sum,
+      allBases,
+      allAddons,
+    };
+  }
+
+  _loadData() {
+    this.data = {
+      COOKIE_BASES,
+      COOKIE_ADDONS,
+    };
+  }
+}
+
+new CookieMakerApp();
