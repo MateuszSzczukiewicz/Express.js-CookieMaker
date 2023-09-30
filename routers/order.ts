@@ -1,19 +1,21 @@
-const express = require("express");
+import { Router, Request, Response } from "express";
+import { CookieMakerApp } from "../index";
+import { MyRouter } from "../types/my-router";
 
-class OrderRouter {
-  constructor(cmapp) {
-    this.cmapp = cmapp;
-    this.router = express.Router();
+export class OrderRouter implements MyRouter {
+  public readonly urlPrefix = "/order";
+  public readonly router: Router = Router();
+
+  constructor(private cmapp: CookieMakerApp) {
     this.setUpRoutes();
   }
 
-  setUpRoutes(cmapp) {
-    this.cmapp = cmapp;
+  private setUpRoutes(): void {
     this.router.get("/summary", this.summary);
     this.router.get("/thanks", this.thanks);
   }
 
-  summary = (req, res) => {
+  private summary = (req: Request, res: Response): void => {
     const { sum, addons, base, allBases, allAddons } =
       this.cmapp.getCookieSettings(req);
 
@@ -28,7 +30,7 @@ class OrderRouter {
     });
   };
 
-  thanks = (req, res) => {
+  private thanks = (req: Request, res: Response): void => {
     const { sum } = this.cmapp.getCookieSettings(req);
 
     res
@@ -39,7 +41,3 @@ class OrderRouter {
       });
   };
 }
-
-module.exports = {
-  OrderRouter,
-};
